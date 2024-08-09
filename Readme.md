@@ -1,4 +1,4 @@
-# BudBot
+# BudBot 🤖💸
 
 ## Setting up development environment
 
