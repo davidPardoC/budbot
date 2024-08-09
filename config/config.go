@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -14,7 +15,8 @@ type Config struct {
 }
 
 type Telegram struct {
-	Token string
+	Token   string
+	BaseURL string
 }
 
 type Database struct {
@@ -39,7 +41,8 @@ func LoadConfig() Config {
 
 	return Config{
 		Telegram: Telegram{
-			Token: os.Getenv("TELEGRAM_TOKEN"),
+			Token:   os.Getenv("TELEGRAM_TOKEN"),
+			BaseURL: fmt.Sprintf("https://api.telegram.org/bot%s", os.Getenv("TELEGRAM_TOKEN")),
 		},
 		Database: Database{
 			Host:     os.Getenv("DB_HOST"),
