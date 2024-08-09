@@ -5,6 +5,8 @@ import (
 	"log"
 
 	"github.com/davidPardoC/budbot/config"
+	categories "github.com/davidPardoC/budbot/internal/categories/models"
+	users "github.com/davidPardoC/budbot/internal/users/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -16,4 +18,8 @@ func Connect(cfg config.Config) *gorm.DB {
 		log.Fatal("Error connecting to database")
 	}
 	return db
+}
+
+func Migrate(db *gorm.DB) {
+	db.AutoMigrate(&users.User{}, &categories.Category{})
 }

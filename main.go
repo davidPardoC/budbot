@@ -9,7 +9,13 @@ import (
 
 func main() {
 	config := config.LoadConfig()
-	database := database.Connect(config)
+	postgresDatabase := database.Connect(config)
+
+	if config.Server.Env == "local" {
+		database.Migrate(postgresDatabase)
+	}
+
 	router := gin.Default()
-	app.NewApp(database, router, config).Run()
+	app.NewApp(postgresDatabase, router, config).Run()
+
 }

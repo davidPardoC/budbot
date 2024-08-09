@@ -4,7 +4,7 @@
 
 ### Prerequisites:
 
-- Go
+- Go 1.22.x
 - Docker (for local containers)
 
 1. Create env file

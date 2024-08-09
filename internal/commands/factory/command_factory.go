@@ -1,12 +1,24 @@
 package commands
 
-type ICommandHandler interface{}
+import "github.com/davidPardoC/budbot/internal/commands/handlers"
 
-type PrintCommandHandler struct{}
+var CommandFactory map[string]handlers.ICommandHandler
+var CommandsList []string
 
-var CommandFactory map[string]ICommandHandler
+func SetupCommands() {
+	CommandFactory = make(map[string]handlers.ICommandHandler)
+	CommandFactory["/start"] = handlers.StartCommandHandler{}
+	CommandFactory["/help"] = handlers.HelpCommandHandler{}
+	CommandFactory["/signup"] = handlers.SignupCommandHandler{}
+}
+
+func GenerateCommandsStringList() {
+	for k := range CommandFactory {
+		CommandsList = append(CommandsList, k)
+	}
+}
 
 func init() {
-	CommandFactory = make(map[string]ICommandHandler)
-	CommandFactory["print"] = PrintCommandHandler{}
+	SetupCommands()
+	GenerateCommandsStringList()
 }

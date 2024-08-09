@@ -27,6 +27,7 @@ type Database struct {
 
 type Server struct {
 	Port string
+	Env  string
 }
 
 func LoadConfig() Config {
@@ -49,6 +50,7 @@ func LoadConfig() Config {
 		},
 		Server: Server{
 			Port: os.Getenv("PORT"),
+			Env:  os.Getenv("ENV"),
 		},
 	}
 }

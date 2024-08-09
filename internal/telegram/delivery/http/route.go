@@ -2,6 +2,14 @@ package http
 
 import "github.com/gin-gonic/gin"
 
-func WebhookRoute(r *gin.Engine) {
-	r.POST("/api/v1/webhook/telegram", TelegramWebHookHandler)
+type WebhookRouter struct {
+	router *gin.Engine
+}
+
+func NewWebhookRouter(router *gin.Engine) *WebhookRouter {
+	return &WebhookRouter{router: router}
+}
+
+func (r *WebhookRouter) SetupWebhookRouter() {
+	r.router.POST("/api/v1/webhook/telegram", WebHookHandler)
 }
