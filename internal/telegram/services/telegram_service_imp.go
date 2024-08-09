@@ -3,6 +3,7 @@ package services
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -18,10 +19,12 @@ func NewTelegramService(config config.Config) ITelegramService {
 	return &TelegramService{config: config}
 }
 
-func (ts *TelegramService) SendMessage(payload map[string]interface{}) error {
+func (ts *TelegramService) SendMessage(payload any) error {
 	jsonBody, _ := json.Marshal(payload)
 	requestBody := bytes.NewBuffer(jsonBody)
-	resp, err := http.Post(ts.config.Telegram.BaseURL+"/sendMessage", "application/json", requestBody)
+	url := fmt.Sprintf("%s/sendMessage", ts.config.Telegram.BaseURL)
+	println(url)
+	resp, err := http.Post(url, "application/json", requestBody)
 
 	if err != nil {
 		return err

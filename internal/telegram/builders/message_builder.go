@@ -27,24 +27,28 @@ type InlineKeyboardButton struct {
 	Text string `json:"text"`
 }
 
-func NewTelegramMessageBuilder() *TelegramMessageBuilder {
-	return &TelegramMessageBuilder{}
+func NewTelegramMessageBuilder(chatID int64) *TelegramMessageBuilder {
+	return &TelegramMessageBuilder{ChatID: chatID}
 }
 
-func (b *TelegramMessageBuilder) SetChatID(chatID int64) {
+func (b *TelegramMessageBuilder) SetChatID(chatID int64) *TelegramMessageBuilder {
 	b.ChatID = chatID
+	return b
 }
 
-func (b *TelegramMessageBuilder) SetParseMode(parseMode ParseMode) {
+func (b *TelegramMessageBuilder) SetParseMode(parseMode ParseMode) *TelegramMessageBuilder {
 	b.ParseMode = parseMode
+	return b
 }
 
-func (b *TelegramMessageBuilder) SetText(text string) {
+func (b *TelegramMessageBuilder) SetText(text string) *TelegramMessageBuilder {
 	b.Text = text
+	return b
 }
 
-func (b *TelegramMessageBuilder) AddInlineKeyboardButton(text string) {
+func (b *TelegramMessageBuilder) AddInlineKeyboardButton(text string) *TelegramMessageBuilder {
 	b.ReplyMarkup.InlineKeyboard = append(b.ReplyMarkup.InlineKeyboard, InlineKeyboardButton{Text: text})
+	return b
 }
 
 func (b *TelegramMessageBuilder) Build() string {

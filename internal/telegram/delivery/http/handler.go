@@ -1,33 +1,40 @@
 package http
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"io"
+	"log"
+	"net/http"
 
+	"github.com/davidPardoC/budbot/internal/telegram/delivery/dtos"
+	"github.com/davidPardoC/budbot/internal/telegram/usecases"
 	"github.com/gin-gonic/gin"
 )
 
-func WebHookHandler(c *gin.Context) {
-	bodyBytes, err := io.ReadAll(c.Request.Body)
+type TelegramHandlers struct {
+	usecases usecases.ITelegramUsecases
+}
 
-	if err != nil {
-		c.JSON(400, gin.H{
-			"message": "error reading body",
-		})
+func NewTelegramHandlers(usecases usecases.ITelegramUsecases) *TelegramHandlers {
+	return &TelegramHandlers{
+		usecases: usecases,
+	}
+}
+
+func (h *TelegramHandlers) WebHookHandler(c *gin.Context) {
+
+	var webhookBody dtos.TelegramWebhookDto
+
+	if err := c.ShouldBindJSON(&webhookBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	var prettyJSON bytes.Buffer
+	message, err := h.usecases.HandleWebhook(webhookBody)
 
-	json.Indent(&prettyJSON, bodyBytes, "", "    ")
-
-	fmt.Println(prettyJSON.String())
-
-	c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+	if err != nil {
+		log.Println(err.Error())
+	}
 
 	c.JSON(200, gin.H{
-		"message": "pong",
+		"message": message,
 	})
 }
