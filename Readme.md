@@ -31,7 +31,7 @@ go mod tidy
 go run main.go
 ```
 
-Or yu can use [air](https://github.com/air-verse/air) for Live reload
+Or you can use [air](https://github.com/air-verse/air) for Live reload
 
 ```bash
 air
