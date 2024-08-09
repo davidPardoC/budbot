@@ -31,4 +31,10 @@ go mod tidy
 go run main.go
 ```
 
-You can use ngrok for local development in order to receive webhooks.
+Or yu can use [air](https://github.com/air-verse/air) for Live reload
+
+```bash
+air
+```
+
+You can use [ngrok](https://ngrok.com/) for local development in order to receive webhooks.
