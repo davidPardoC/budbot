@@ -1,5 +1,5 @@
 package services
 
 type ITelegramService interface {
-	SendMessage(payload any) error
+	SendMessage(payload string) error
 }

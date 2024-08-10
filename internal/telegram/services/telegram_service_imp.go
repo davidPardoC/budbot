@@ -2,10 +2,7 @@ package services
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
-	"log"
 	"net/http"
 
 	"github.com/davidPardoC/budbot/config"
@@ -19,11 +16,9 @@ func NewTelegramService(config config.Config) ITelegramService {
 	return &TelegramService{config: config}
 }
 
-func (ts *TelegramService) SendMessage(payload any) error {
-	jsonBody, _ := json.Marshal(payload)
-	requestBody := bytes.NewBuffer(jsonBody)
+func (ts *TelegramService) SendMessage(payload string) error {
+	requestBody := bytes.NewBuffer([]byte(payload))
 	url := fmt.Sprintf("%s/sendMessage", ts.config.Telegram.BaseURL)
-	println(url)
 	resp, err := http.Post(url, "application/json", requestBody)
 
 	if err != nil {
@@ -31,10 +26,6 @@ func (ts *TelegramService) SendMessage(payload any) error {
 	}
 
 	defer resp.Body.Close()
-
-	body, _ := io.ReadAll(resp.Body)
-
-	log.Println(string(body))
 
 	return nil
 }

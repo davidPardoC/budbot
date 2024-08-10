@@ -1,6 +1,10 @@
 package http
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
 
@@ -20,6 +24,17 @@ func NewTelegramHandlers(usecases usecases.ITelegramUsecases) *TelegramHandlers 
 }
 
 func (h *TelegramHandlers) WebHookHandler(c *gin.Context) {
+
+	body, _ := io.ReadAll(c.Request.Body)
+
+	var prettyBody bytes.Buffer
+	if err := json.Indent(&prettyBody, body, "", "  "); err != nil {
+		fmt.Println("Error formateando JSON:", err)
+	} else {
+		fmt.Println("Cuerpo de la solicitud:\n", prettyBody.String())
+	}
+
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	var webhookBody dtos.TelegramWebhookDto
 

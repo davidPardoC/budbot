@@ -1,24 +1,35 @@
-package commands
+package factory
 
-import "github.com/davidPardoC/budbot/internal/commands/handlers"
+import (
+	"github.com/davidPardoC/budbot/config"
+	"github.com/davidPardoC/budbot/internal/commands/handlers"
+	"github.com/davidPardoC/budbot/internal/telegram/services"
+)
 
-var CommandFactory map[string]handlers.ICommandHandler
-var CommandsList []string
-
-func SetupCommands() {
-	CommandFactory = make(map[string]handlers.ICommandHandler)
-	CommandFactory["/start"] = handlers.StartCommandHandler{}
-	CommandFactory["/help"] = handlers.HelpCommandHandler{}
-	CommandFactory["/signup"] = handlers.SignupCommandHandler{}
+type commandsFactory struct {
+	config       config.Config
+	commands     map[string]handlers.ICommandHandler
+	commandsList []string
 }
 
-func GenerateCommandsStringList() {
-	for k := range CommandFactory {
-		CommandsList = append(CommandsList, k)
+func NewCommandsFactory(config config.Config, telegramService services.ITelegramService) *commandsFactory {
+	commands := make(map[string]handlers.ICommandHandler)
+
+	commands["/signup"] = handlers.NewSignupCommandHandler(telegramService)
+
+	commandsList := make([]string, 0)
+
+	for k := range commands {
+		commandsList = append(commandsList, k)
 	}
+
+	return &commandsFactory{config: config, commands: commands, commandsList: commandsList}
 }
 
-func init() {
-	SetupCommands()
-	GenerateCommandsStringList()
+func (cf *commandsFactory) GetCommand(command string) handlers.ICommandHandler {
+	return cf.commands[command]
+}
+
+func (cf *commandsFactory) GetCommandsList() []string {
+	return cf.commandsList
 }

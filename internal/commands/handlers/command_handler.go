@@ -2,5 +2,5 @@ package handlers
 
 type ICommandHandler interface {
 	ValidateArgs() bool
-	HandleCommand()
+	HandleCommand(chatID int64)
 }
