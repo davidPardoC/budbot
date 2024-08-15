@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"fmt"
+	"log"
 	"slices"
 
 	"github.com/davidPardoC/budbot/config"
@@ -30,6 +31,16 @@ func (u *TelegramUsecases) HandleWebhook(body dtos.TelegramWebhookDto) (string, 
 
 	chatId := body.Message.Chat.Id
 
+	if body.Message.ContactDto.UserId != 0 {
+		user, err := u.userUseCases.CreateUser(body.Message.ContactDto.UserId, body.Message.ContactDto.PhoneNumber, body.Message.ContactDto.FirstName, body.Message.ContactDto.LastName, body.Message.Chat.Type)
+		if err != nil {
+			log.Println("Error creating user: ", err)
+			return "pong", err
+		}
+		u.SendOnSignupMessage(user.ID)
+		return "pong", nil
+	}
+
 	commandsFactory := factory.NewCommandsFactory(u.config, u.services)
 	commands := commandsFactory.GetCommandsList()
 	callbackQueryCommand := u.GetCommandFromCallbackQuery(body)
@@ -43,11 +54,11 @@ func (u *TelegramUsecases) HandleWebhook(body dtos.TelegramWebhookDto) (string, 
 	handler := commandsFactory.GetCommand(callbackQueryCommand)
 
 	if user == nil && !isCommand {
-		fmt.Println("User does not exist")
+		log.Println("User does not exist")
 		u.RequestForContact(chatId)
 		return "pong", nil
 	} else if isCommand && handler != nil && user == nil {
-		fmt.Println("Command exists")
+		log.Println("Command exists")
 		handler.HandleCommand(chatId)
 		return "pong", nil
 	}
@@ -78,4 +89,12 @@ func (u *TelegramUsecases) RequestForContact(chatID int64) (string, error) {
 	u.services.SendMessage(payload)
 
 	return "", nil
+}
+
+func (u *TelegramUsecases) SendOnSignupMessage(chatId int64) {
+	mainText := `Welcome to BudBot!`
+	telegramMessageBuilder := builders.NewTelegramMessageBuilder(chatId)
+	telegramMessageBuilder.SetText(mainText).SetParseMode("Markdown")
+	payload := telegramMessageBuilder.Build()
+	u.services.SendMessage(payload)
 }

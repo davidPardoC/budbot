@@ -26,7 +26,7 @@ func NewApp(db *gorm.DB, gin *gin.Engine, cfg config.Config) *App {
 }
 
 func (a *App) Run() {
-	webhookRouter := telegram.NewWebhookRouter(a.gin, a.cfg)
+	webhookRouter := telegram.NewWebhookRouter(a.gin, a.cfg, a.db)
 	healthRouter := health.NewHealthRouter(a.gin)
 
 	webhookRouter.SetupWebhookRouter()
