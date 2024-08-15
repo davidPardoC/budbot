@@ -29,9 +29,11 @@ func NewTelegramUsecases(userUseCases userUc.IUserUseCases, config config.Config
 
 func (u *TelegramUsecases) HandleWebhook(body dtos.TelegramWebhookDto) (string, error) {
 
+	user, _ := u.userUseCases.FindByChatID(body.Message.Chat.Id)
+
 	chatId := body.Message.Chat.Id
 
-	if body.Message.ContactDto.UserId != 0 {
+	if body.Message.ContactDto.UserId != 0 && user == nil {
 		user, err := u.userUseCases.CreateUser(body.Message.ContactDto.UserId, body.Message.ContactDto.PhoneNumber, body.Message.ContactDto.FirstName, body.Message.ContactDto.LastName, body.Message.Chat.Type)
 		if err != nil {
 			log.Println("Error creating user: ", err)
@@ -45,8 +47,6 @@ func (u *TelegramUsecases) HandleWebhook(body dtos.TelegramWebhookDto) (string, 
 	commands := commandsFactory.GetCommandsList()
 	callbackQueryCommand := u.GetCommandFromCallbackQuery(body)
 
-	user, err := u.userUseCases.FindByChatID(body.Message.Chat.Id)
-
 	fmt.Println("Commands: ", commands)
 	fmt.Println("CallbackQueryCommand: ", callbackQueryCommand)
 
@@ -57,19 +57,15 @@ func (u *TelegramUsecases) HandleWebhook(body dtos.TelegramWebhookDto) (string, 
 		log.Println("User does not exist")
 		u.RequestForContact(chatId)
 		return "pong", nil
-	} else if isCommand && handler != nil && user == nil {
-		log.Println("Command exists")
+	}
+
+	if user != nil && !isCommand {
+		u.SendOnSignupMessage(user.ID)
+		return "pong", nil
+	}
+
+	if isCommand {
 		handler.HandleCommand(chatId)
-		return "pong", nil
-	}
-
-	if err != nil {
-		return "", err
-	}
-
-	if user != nil {
-		fmt.Println("User exists")
-		return "pong", nil
 	}
 
 	return "pong", nil
@@ -92,9 +88,31 @@ func (u *TelegramUsecases) RequestForContact(chatID int64) (string, error) {
 }
 
 func (u *TelegramUsecases) SendOnSignupMessage(chatId int64) {
-	mainText := `Welcome to BudBot!`
+
+	commands := []struct {
+		Label   string
+		Command string
+	}{
+		{"Get a list of commands", "/help"},
+		{"Record a new category", "/rc <category_name>"},
+		{"Record a new expense", "/re <category_name> <desc> <amount>"},
+		{"Get a report of a category", "/report <category_name>"},
+		{"Get a report of all categories", "/report"},
+		{"Delete a category", "/dc <category_name>"},
+	}
+
+	mainText := `
+	Welcome to BudBot!
+	We are glad you are here. 
+	Here is a list of commands you can use:
+	`
 	telegramMessageBuilder := builders.NewTelegramMessageBuilder(chatId)
-	telegramMessageBuilder.SetText(mainText).SetParseMode("Markdown")
+	telegramMessageBuilder.SetText(mainText).SetParseMode("Markdown").RemovePreviousKeyboard()
+
+	for _, command := range commands {
+		telegramMessageBuilder.AddInlineKeyboardButton(command.Label, command.Command)
+	}
+
 	payload := telegramMessageBuilder.Build()
 	u.services.SendMessage(payload)
 }

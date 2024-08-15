@@ -19,8 +19,8 @@ func (u *UserRepository) CreateUser(userId int64, phone_number string, firstName
 	return user, result.Error
 }
 
-func (u *UserRepository) FindByChatID(chatId int64) (models.User, error) {
+func (u *UserRepository) FindByChatID(chatId int64) (*models.User, error) {
 	var user models.User
 	result := u.db.Where("chat_id = ?", chatId).First(&user)
-	return user, result.Error
+	return &user, result.Error
 }

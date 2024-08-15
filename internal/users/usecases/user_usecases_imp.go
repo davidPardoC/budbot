@@ -20,5 +20,5 @@ func (u *UserUseCases) CreateUser(userId int64, phone_number string, firstName s
 }
 
 func (u *UserUseCases) FindByChatID(chatID int64) (*models.User, error) {
-	return nil, nil
+	return u.userRepository.FindByChatID(chatID)
 }

@@ -24,6 +24,7 @@ type TelegramMessage struct {
 type ReplyMarkup struct {
 	InlineKeyboard [][]InlineKeyboardButton `json:"inline_keyboard,omitempty"`
 	Keyboard       [][]KeyboardButton       `json:"keyboard,omitempty"`
+	RemoveKeyboard bool                     `json:"remove_keyboard,omitempty"`
 }
 
 type InlineKeyboardButton struct {
@@ -55,13 +56,18 @@ func (b *TelegramMessage) SetText(text string) *TelegramMessage {
 	return b
 }
 
-func (b *TelegramMessage) AddInlineKeyboardButton(text string) *TelegramMessage {
-	b.ReplyMarkup.InlineKeyboard = append(b.ReplyMarkup.InlineKeyboard, []InlineKeyboardButton{{Text: text, CallbackData: text}})
+func (b *TelegramMessage) AddInlineKeyboardButton(label string, callback string) *TelegramMessage {
+	b.ReplyMarkup.InlineKeyboard = append(b.ReplyMarkup.InlineKeyboard, []InlineKeyboardButton{{Text: label, CallbackData: callback}})
 	return b
 }
 
 func (b *TelegramMessage) AddKeyboardButton(text string, requestContact bool) *TelegramMessage {
 	b.ReplyMarkup.Keyboard = append(b.ReplyMarkup.Keyboard, []KeyboardButton{{Text: text, RequestContact: requestContact}})
+	return b
+}
+
+func (b *TelegramMessage) RemovePreviousKeyboard() *TelegramMessage {
+	b.ReplyMarkup.RemoveKeyboard = true
 	return b
 }
 

@@ -31,6 +31,6 @@ func Test_TelegramMessageBuilder(t *testing.T) {
   "resize_keyboard": true,
   "one_time_keyboard": true
 }`
-	telegramMessage := builders.NewTelegramMessageBuilder(123456789).SetText("Please provide your contact information").SetParseMode("Markdown").AddInlineKeyboardButton("/signup").AddInlineKeyboardButton("/login").Build()
+	telegramMessage := builders.NewTelegramMessageBuilder(123456789).SetText("Please provide your contact information").SetParseMode("Markdown").AddInlineKeyboardButton("/signup", "/signup").AddInlineKeyboardButton("/login", "/login").Build()
 	assert.Equal(t, expected, telegramMessage)
 }
