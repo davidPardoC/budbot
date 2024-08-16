@@ -6,22 +6,22 @@ import (
 	"github.com/davidPardoC/budbot/internal/telegram/services"
 )
 
-type HelpCommandHandler struct {
+type AboutCommandHandler struct {
 	telegramService services.ITelegramService
 }
 
-func NewHelpCommandHandler(telegramService services.ITelegramService) *HelpCommandHandler {
-	return &HelpCommandHandler{
+func NewAboutCommandHandler(telegramService services.ITelegramService) *AboutCommandHandler {
+	return &AboutCommandHandler{
 		telegramService: telegramService,
 	}
 }
 
-func (h HelpCommandHandler) HandleCommand(chatID int64, args []string) {
+func (h AboutCommandHandler) HandleCommand(chatID int64, args []string) {
 	telegramMessageBuilder := builders.NewTelegramMessageBuilder(chatID)
-	payload := telegramMessageBuilder.SetText(messages.HelpCommandText).Build()
+	payload := telegramMessageBuilder.SetText(messages.AboutCommandText).Build()
 	h.telegramService.SendMessage(payload)
 }
 
-func (h HelpCommandHandler) ValidateArgs(args []string) bool {
+func (h AboutCommandHandler) ValidateArgs(args []string) bool {
 	return true
 }

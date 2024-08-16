@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"log"
 	"slices"
+	"strings"
 
 	"github.com/davidPardoC/budbot/config"
 	"github.com/davidPardoC/budbot/internal/commands/factory"
 	"github.com/davidPardoC/budbot/internal/telegram/builders"
+	"github.com/davidPardoC/budbot/internal/telegram/constants/messages"
 	"github.com/davidPardoC/budbot/internal/telegram/delivery/dtos"
 	"github.com/davidPardoC/budbot/internal/telegram/services"
 	userUc "github.com/davidPardoC/budbot/internal/users/usecases"
@@ -43,76 +45,72 @@ func (u *TelegramUsecases) HandleWebhook(body dtos.TelegramWebhookDto) (string, 
 		return "pong", nil
 	}
 
-	commandsFactory := factory.NewCommandsFactory(u.config, u.services)
-	commands := commandsFactory.GetCommandsList()
-	callbackQueryCommand := u.GetCommandFromCallbackQuery(body)
-
-	fmt.Println("Commands: ", commands)
-	fmt.Println("CallbackQueryCommand: ", callbackQueryCommand)
-
-	isCommand := slices.Contains(commands, callbackQueryCommand)
-	handler := commandsFactory.GetCommand(callbackQueryCommand)
-
-	if user == nil && !isCommand {
-		log.Println("User does not exist")
+	if user == nil {
 		u.RequestForContact(chatId)
 		return "pong", nil
 	}
 
-	if user != nil && !isCommand {
-		u.SendOnSignupMessage(user.ID)
+	commandsFactory := factory.NewCommandsFactory(u.config, u.services)
+	commands := commandsFactory.GetCommandsList()
+
+	userCommand, args := u.getUserCommand(body)
+
+	isCommand := u.isCommand(userCommand)
+	isKnownCommand := u.isKnownCommand(userCommand, commands)
+
+	if isCommand && !isKnownCommand {
+		handler := commandsFactory.GetCommand("/help")
+		handler.HandleCommand(chatId, args)
 		return "pong", nil
 	}
 
-	if isCommand {
-		handler.HandleCommand(chatId)
+	fmt.Println("Commands -> ", commands)
+	fmt.Println("UserCommand -> ", userCommand)
+
+	handler := commandsFactory.GetCommand(userCommand)
+
+	if isKnownCommand {
+		handler.HandleCommand(chatId, args)
+	} else {
+		handler := commandsFactory.GetCommand("/help")
+		handler.HandleCommand(chatId, []string{})
 	}
 
 	return "pong", nil
 }
 
-func (u *TelegramUsecases) GetCommandFromCallbackQuery(webhookData dtos.TelegramWebhookDto) string {
-	return webhookData.CallbackQuery.Data
+func (u *TelegramUsecases) isCommand(message string) bool {
+	return strings.HasPrefix(message, "/")
 }
 
-func (u *TelegramUsecases) RequestForContact(chatID int64) (string, error) {
+func (u *TelegramUsecases) isKnownCommand(command string, commands []string) bool {
+	return slices.Contains(commands, command)
+}
 
-	mainText := `Seems like you are new here. Please provide your contact information by clicking the button below.`
+func (u *TelegramUsecases) getUserCommand(webhookData dtos.TelegramWebhookDto) (string, []string) {
+	message := webhookData.CallbackQuery.Data
 
+	if message == "" {
+		message = webhookData.Message.Text
+	}
+
+	command := strings.Split(message, " ")[0]
+	args := strings.Split(message, " ")[1:]
+
+	return command, args
+}
+
+func (u *TelegramUsecases) RequestForContact(chatID int64) {
 	telegramMessageBuilder := builders.NewTelegramMessageBuilder(chatID)
-	telegramMessageBuilder.SetText(mainText).SetParseMode("Markdown").AddKeyboardButton("Send my contact information", true)
+	telegramMessageBuilder.SetText(messages.ContactRequestText).SetParseMode("Markdown").AddKeyboardButton("Send my contact information", true)
 	payload := telegramMessageBuilder.Build()
 	u.services.SendMessage(payload)
 
-	return "", nil
 }
 
 func (u *TelegramUsecases) SendOnSignupMessage(chatId int64) {
-
-	commands := []struct {
-		Label   string
-		Command string
-	}{
-		{"Get a list of commands", "/help"},
-		{"Record a new category", "/rc <category_name>"},
-		{"Record a new expense", "/re <category_name> <desc> <amount>"},
-		{"Get a report of a category", "/report <category_name>"},
-		{"Get a report of all categories", "/report"},
-		{"Delete a category", "/dc <category_name>"},
-	}
-
-	mainText := `
-	Welcome to BudBot!
-	We are glad you are here. 
-	Here is a list of commands you can use:
-	`
 	telegramMessageBuilder := builders.NewTelegramMessageBuilder(chatId)
-	telegramMessageBuilder.SetText(mainText).SetParseMode("Markdown").RemovePreviousKeyboard()
-
-	for _, command := range commands {
-		telegramMessageBuilder.AddInlineKeyboardButton(command.Label, command.Command)
-	}
-
+	telegramMessageBuilder.SetText(messages.CommandsListText).SetParseMode("Markdown").RemovePreviousKeyboard()
 	payload := telegramMessageBuilder.Build()
 	u.services.SendMessage(payload)
 }

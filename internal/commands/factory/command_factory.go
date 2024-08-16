@@ -16,6 +16,9 @@ func NewCommandsFactory(config config.Config, telegramService services.ITelegram
 	commands := make(map[string]handlers.ICommandHandler)
 
 	commands["/signup"] = handlers.NewSignupCommandHandler(telegramService)
+	commands["/help"] = handlers.NewHelpCommandHandler(telegramService)
+	commands["/about"] = handlers.NewAboutCommandHandler(telegramService)
+	commands["/feedback"] = handlers.NewFeedBackCommandHandler(telegramService)
 
 	commandsList := make([]string, 0)
 
