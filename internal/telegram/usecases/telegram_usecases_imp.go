@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"slices"
@@ -14,6 +15,7 @@ import (
 	"github.com/davidPardoC/budbot/internal/telegram/delivery/dtos"
 	"github.com/davidPardoC/budbot/internal/telegram/services"
 	userUc "github.com/davidPardoC/budbot/internal/users/usecases"
+	"gorm.io/gorm"
 )
 
 type TelegramUsecases struct {
@@ -33,11 +35,11 @@ func NewTelegramUsecases(userUseCases userUc.IUserUseCases, config config.Config
 
 func (u *TelegramUsecases) HandleWebhook(body dtos.TelegramWebhookDto) (string, error) {
 
-	user, _ := u.userUseCases.FindByChatID(body.Message.Chat.Id)
+	user, err := u.userUseCases.FindByChatID(body.Message.Chat.Id)
 
 	chatId := body.Message.Chat.Id
 
-	if body.Message.ContactDto.UserId != 0 && user == nil {
+	if body.Message.ContactDto.UserId != 0 && user.ID == 0 {
 		user, err := u.userUseCases.CreateUser(body.Message.ContactDto.UserId, body.Message.ContactDto.PhoneNumber, body.Message.ContactDto.FirstName, body.Message.ContactDto.LastName, body.Message.Chat.Type)
 		if err != nil {
 			log.Println("Error creating user: ", err)
@@ -47,7 +49,7 @@ func (u *TelegramUsecases) HandleWebhook(body dtos.TelegramWebhookDto) (string, 
 		return "pong", nil
 	}
 
-	if user == nil {
+	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		u.RequestForContact(chatId)
 		return "pong", nil
 	}
