@@ -4,6 +4,7 @@ import (
 	"github.com/davidPardoC/budbot/config"
 	"github.com/davidPardoC/budbot/internal/commands/handlers"
 	"github.com/davidPardoC/budbot/internal/telegram/services"
+	"github.com/davidPardoC/budbot/internal/users/usecases"
 )
 
 type commandsFactory struct {
@@ -12,13 +13,14 @@ type commandsFactory struct {
 	commandsList []string
 }
 
-func NewCommandsFactory(config config.Config, telegramService services.ITelegramService) *commandsFactory {
+func NewCommandsFactory(config config.Config, telegramService services.ITelegramService, userUseCases usecases.IUserUseCases) *commandsFactory {
 	commands := make(map[string]handlers.ICommandHandler)
 
 	commands["/signup"] = handlers.NewSignupCommandHandler(telegramService)
 	commands["/help"] = handlers.NewHelpCommandHandler(telegramService)
 	commands["/about"] = handlers.NewAboutCommandHandler(telegramService)
 	commands["/feedback"] = handlers.NewFeedBackCommandHandler(telegramService)
+	commands["/budget"] = handlers.NewBudgetCommandHandler(telegramService, userUseCases)
 
 	commandsList := make([]string, 0)
 

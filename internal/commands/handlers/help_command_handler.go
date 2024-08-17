@@ -18,7 +18,7 @@ func NewHelpCommandHandler(telegramService services.ITelegramService) *HelpComma
 
 func (h HelpCommandHandler) HandleCommand(chatID int64, args []string) {
 	telegramMessageBuilder := builders.NewTelegramMessageBuilder(chatID)
-	payload := telegramMessageBuilder.SetText(messages.HelpCommandText).Build()
+	payload := telegramMessageBuilder.SetText(messages.CommandsListText).Build()
 	h.telegramService.SendMessage(payload)
 }
 

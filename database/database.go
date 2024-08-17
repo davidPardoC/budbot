@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/davidPardoC/budbot/config"
+	budgets "github.com/davidPardoC/budbot/internal/budgets/models"
 	categories "github.com/davidPardoC/budbot/internal/categories/models"
 	users "github.com/davidPardoC/budbot/internal/users/models"
 	"gorm.io/driver/postgres"
@@ -21,5 +22,5 @@ func Connect(cfg config.Config) *gorm.DB {
 }
 
 func Migrate(db *gorm.DB) {
-	db.AutoMigrate(&users.User{}, &categories.Category{})
+	db.AutoMigrate(&users.User{}, &categories.Category{}, &budgets.Budget{})
 }

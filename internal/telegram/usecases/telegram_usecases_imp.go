@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/davidPardoC/budbot/config"
+	"github.com/davidPardoC/budbot/internal/budgets/repository"
 	"github.com/davidPardoC/budbot/internal/commands/factory"
 	"github.com/davidPardoC/budbot/internal/telegram/builders"
 	"github.com/davidPardoC/budbot/internal/telegram/constants/messages"
@@ -16,9 +17,10 @@ import (
 )
 
 type TelegramUsecases struct {
-	userUseCases userUc.IUserUseCases
-	config       config.Config
-	services     services.ITelegramService
+	userUseCases     userUc.IUserUseCases
+	config           config.Config
+	services         services.ITelegramService
+	budgetRepository repository.IBudgetRepository
 }
 
 func NewTelegramUsecases(userUseCases userUc.IUserUseCases, config config.Config, services services.ITelegramService) *TelegramUsecases {
@@ -50,7 +52,7 @@ func (u *TelegramUsecases) HandleWebhook(body dtos.TelegramWebhookDto) (string, 
 		return "pong", nil
 	}
 
-	commandsFactory := factory.NewCommandsFactory(u.config, u.services)
+	commandsFactory := factory.NewCommandsFactory(u.config, u.services, u.userUseCases)
 	commands := commandsFactory.GetCommandsList()
 
 	userCommand, args := u.getUserCommand(body)

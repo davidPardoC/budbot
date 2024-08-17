@@ -9,6 +9,8 @@ import (
 	telegramUc "github.com/davidPardoC/budbot/internal/telegram/usecases"
 	userRepo "github.com/davidPardoC/budbot/internal/users/repository"
 	userUc "github.com/davidPardoC/budbot/internal/users/usecases"
+
+	budgetRepo "github.com/davidPardoC/budbot/internal/budgets/repository"
 )
 
 type WebhookRouter struct {
@@ -23,8 +25,9 @@ func NewWebhookRouter(router *gin.Engine, config config.Config, db *gorm.DB) *We
 
 func (r *WebhookRouter) SetupWebhookRouter() {
 
+	budgetRepository := budgetRepo.NewBudgetRepository(r.db)
 	userRepository := userRepo.NewUserRepository(r.db)
-	userUc := userUc.NewUserUsecases(userRepository)
+	userUc := userUc.NewUserUsecases(userRepository, budgetRepository)
 
 	telegramServices := services.NewTelegramService(r.config)
 	telegramUseCases := telegramUc.NewTelegramUsecases(userUc, r.config, telegramServices)
