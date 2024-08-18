@@ -5,6 +5,8 @@ import (
 
 	budgetRepo "github.com/davidPardoC/budbot/internal/budgets/repository"
 	"github.com/davidPardoC/budbot/internal/telegram/constants/messages"
+	transactionsModels "github.com/davidPardoC/budbot/internal/transactions/models"
+	transactionsRepo "github.com/davidPardoC/budbot/internal/transactions/repository"
 	"github.com/davidPardoC/budbot/internal/users/models"
 	"github.com/davidPardoC/budbot/internal/users/repository"
 )
@@ -12,12 +14,14 @@ import (
 type UserUseCases struct {
 	userRepository   repository.IUserRepository
 	budgetRepository budgetRepo.IBudgetRepository
+	transactionsRepo transactionsRepo.ITransactionsRepository
 }
 
-func NewUserUsecases(userRepository repository.IUserRepository, budgetRepository budgetRepo.IBudgetRepository) *UserUseCases {
+func NewUserUsecases(userRepository repository.IUserRepository, budgetRepository budgetRepo.IBudgetRepository, transactionsRepo transactionsRepo.ITransactionsRepository) *UserUseCases {
 	return &UserUseCases{
 		userRepository:   userRepository,
 		budgetRepository: budgetRepository,
+		transactionsRepo: transactionsRepo,
 	}
 }
 
@@ -46,4 +50,8 @@ func (u *UserUseCases) SetCurrentMothBudget(userId int64, budget float64) (strin
 	}
 	err := u.budgetRepository.CreateBudget(userId, budget)
 	return messages.SuccesBudgetCommandText, err
+}
+
+func (u *UserUseCases) RegisterTransaction(amount float64, description string, categoryID int64, transactionType transactionsModels.TransactionType, userId int64) (int64, error) {
+	return u.transactionsRepo.CreateTransaction(amount, description, categoryID, transactionType, userId)
 }

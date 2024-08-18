@@ -1,10 +1,10 @@
 package models
 
-type transactionType string
+type TransactionType string
 
 const (
-	Expense transactionType = "expense"
-	Income  transactionType = "income"
+	Expense TransactionType = "expense"
+	Income  TransactionType = "income"
 )
 
 type Transactions struct {
@@ -12,6 +12,6 @@ type Transactions struct {
 	Amount      float64         `json:"amount" gorm:"not null"`
 	Description string          `json:"description"`
 	CategoryID  int64           `json:"category_id"`
-	Type        transactionType `json:"type"`
+	Type        TransactionType `json:"type"`
 	CreatedBy   int64           `json:"created_by"`
 }

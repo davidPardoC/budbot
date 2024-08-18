@@ -11,6 +11,8 @@ import (
 	userUc "github.com/davidPardoC/budbot/internal/users/usecases"
 
 	budgetRepo "github.com/davidPardoC/budbot/internal/budgets/repository"
+
+	transactionRepo "github.com/davidPardoC/budbot/internal/transactions/repository"
 )
 
 type WebhookRouter struct {
@@ -27,7 +29,8 @@ func (r *WebhookRouter) SetupWebhookRouter() {
 
 	budgetRepository := budgetRepo.NewBudgetRepository(r.db)
 	userRepository := userRepo.NewUserRepository(r.db)
-	userUc := userUc.NewUserUsecases(userRepository, budgetRepository)
+	transactionRepository := transactionRepo.NewTransactionsRepository()
+	userUc := userUc.NewUserUsecases(userRepository, budgetRepository, transactionRepository)
 
 	telegramServices := services.NewTelegramService(r.config)
 	telegramUseCases := telegramUc.NewTelegramUsecases(userUc, r.config, telegramServices)
