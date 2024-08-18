@@ -32,17 +32,9 @@ func (h *BudgetCommandHandler) HandleCommand(chatID int64, args []string) {
 		return
 	}
 
-	err := h.userUseCases.SetCurrentMothBudget(chatID, h.budget)
+	message, _ := h.userUseCases.SetCurrentMothBudget(chatID, h.budget)
 
-	if err != nil {
-		err := err.Error()
-		message := messages.ErrorBudgetCommandText + "\n" + err
-		payload := telegramMessageBuilder.SetText(message).Build()
-		h.telegramService.SendMessage(payload)
-		return
-	}
-
-	payload := telegramMessageBuilder.SetText(messages.SuccesBudgetCommandText).Build()
+	payload := telegramMessageBuilder.SetText(message).Build()
 	h.telegramService.SendMessage(payload)
 }
 

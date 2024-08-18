@@ -27,3 +27,11 @@ func (br *BudgetRepository) GetLastBudget(userId int64) *models.Budget {
 	br.database.Where("created_by = ?", userId).Last(&budget)
 	return &budget
 }
+
+func (br *BudgetRepository) UpdateBudget(Id int64, budget float64) error {
+	b := &models.Budget{
+		Amount: budget,
+	}
+
+	return br.database.Model(&models.Budget{}).Where("id = ?", Id).Updates(b).Error
+}

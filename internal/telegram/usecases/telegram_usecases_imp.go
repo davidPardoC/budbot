@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/davidPardoC/budbot/config"
-	"github.com/davidPardoC/budbot/internal/budgets/repository"
 	"github.com/davidPardoC/budbot/internal/commands/factory"
 	"github.com/davidPardoC/budbot/internal/telegram/builders"
 	"github.com/davidPardoC/budbot/internal/telegram/constants/messages"
@@ -19,10 +18,9 @@ import (
 )
 
 type TelegramUsecases struct {
-	userUseCases     userUc.IUserUseCases
-	config           config.Config
-	services         services.ITelegramService
-	budgetRepository repository.IBudgetRepository
+	userUseCases userUc.IUserUseCases
+	config       config.Config
+	services     services.ITelegramService
 }
 
 func NewTelegramUsecases(userUseCases userUc.IUserUseCases, config config.Config, services services.ITelegramService) *TelegramUsecases {

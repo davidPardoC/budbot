@@ -1,10 +1,10 @@
 package usecases
 
 import (
-	"fmt"
 	"time"
 
 	budgetRepo "github.com/davidPardoC/budbot/internal/budgets/repository"
+	"github.com/davidPardoC/budbot/internal/telegram/constants/messages"
 	"github.com/davidPardoC/budbot/internal/users/models"
 	"github.com/davidPardoC/budbot/internal/users/repository"
 )
@@ -29,20 +29,21 @@ func (u *UserUseCases) FindByChatID(chatID int64) (*models.User, error) {
 	return u.userRepository.FindByChatID(chatID)
 }
 
-func (u *UserUseCases) SetCurrentMothBudget(userId int64, budget float64) error {
+func (u *UserUseCases) SetCurrentMothBudget(userId int64, budget float64) (string, error) {
 	lastBudget := u.budgetRepository.GetLastBudget(userId)
 
 	if lastBudget == nil {
-		u.budgetRepository.CreateBudget(userId, budget)
-		return nil
+		err := u.budgetRepository.CreateBudget(userId, budget)
+		return messages.SuccesBudgetCommandText, err
 	}
 
 	currentMonth := time.Now().Month()
 	lastBudgetMonth := lastBudget.CreatedAt.Month()
 
 	if currentMonth == lastBudgetMonth {
-		return fmt.Errorf("you already have a budget for this month")
+		err := u.budgetRepository.UpdateBudget(lastBudget.ID, budget)
+		return messages.SuccessUpdatedBudgetText, err
 	}
-
-	return u.budgetRepository.CreateBudget(userId, budget)
+	err := u.budgetRepository.CreateBudget(userId, budget)
+	return messages.SuccesBudgetCommandText, err
 }
