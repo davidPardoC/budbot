@@ -1,0 +1,38 @@
+name: AWS Lighsail Instance Deploy
+
+on:
+    push:
+      branches:
+        - main
+
+jobs:
+    Deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: 📝 Create .env file from secrets
+              run: |
+               echo "ENV=production" >> .env
+               echo "PORT=${{ secrets.PORT }}" >> .env
+               echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+               echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+               echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+               echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+               echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+               echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}" >> .env
+
+            - uses: appleboy/ssh-action@master
+              name: 🎉 Deploy to Remote Server
+              with:
+                key: ${{ secrets.SSH_PRIVATE_KEY }}
+                host: ${{ secrets.HOST }}
+                username: ${{ secrets.USERNAME }}
+                passphrase: ${{ secrets.PASSPHRASE }}
+                script: |
+                  cd /home/ubuntu/budbot &&
+                  git checkout main &&
+                  git fetch --all &&
+                  git reset --hard origin/main &&
+                  git pull origin main &&
+                  scp -o StrictHostKeyChecking=no .env ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ubuntu/budbot/.env &&
+                  docker-compose down &&
+                  docker-compose up -d --build
