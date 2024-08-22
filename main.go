@@ -11,9 +11,7 @@ func main() {
 	config := config.LoadConfig()
 	postgresDatabase := database.Connect(config)
 
-	if config.Server.Env == "local" {
-		database.Migrate(postgresDatabase)
-	}
+	database.Migrate(postgresDatabase)
 
 	router := gin.Default()
 	app.NewApp(postgresDatabase, router, config).Run()
