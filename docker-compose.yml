@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  web:
+    container_name: butbot
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
