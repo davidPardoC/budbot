@@ -13,11 +13,10 @@ func NewTransactionsRepository() *TransactionsRepository {
 	return &TransactionsRepository{}
 }
 
-func (tr *TransactionsRepository) CreateTransaction(amount float64, description string, categoryID int64, transactionType models.TransactionType, createdBy int64) (int64, error) {
+func (tr *TransactionsRepository) CreateTransaction(amount float64, description string, transactionType models.TransactionType, createdBy int64) (int64, error) {
 	t := &models.Transactions{
 		Amount:      amount,
 		Description: description,
-		CategoryID:  categoryID,
 		Type:        transactionType,
 		CreatedBy:   createdBy,
 	}

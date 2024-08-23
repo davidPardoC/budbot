@@ -7,6 +7,8 @@ import (
 	"github.com/davidPardoC/budbot/internal/telegram/constants/messages"
 	"github.com/davidPardoC/budbot/internal/telegram/services"
 	"github.com/davidPardoC/budbot/internal/users/usecases"
+
+	transactionModels "github.com/davidPardoC/budbot/internal/transactions/models"
 )
 
 type ExpenseCommandHandler struct {
@@ -14,7 +16,6 @@ type ExpenseCommandHandler struct {
 	userUseCases    usecases.IUserUseCases
 	amount          float64
 	description     string
-	category        string
 }
 
 func NewExpenseCommandHandler(telegramService services.ITelegramService, userUseCases usecases.IUserUseCases) *ExpenseCommandHandler {
@@ -33,19 +34,27 @@ func (h *ExpenseCommandHandler) HandleCommand(chatID int64, args []string) {
 		h.telegramService.SendMessage(payload)
 		return
 	}
+	_, err := h.userUseCases.RegisterTransaction(h.amount, h.description, transactionModels.Expense, chatID)
+
+	if err != nil {
+		payload := telegramMessageBuilder.SetText(messages.ErrorRegisteringExpenseText).Build()
+		h.telegramService.SendMessage(payload)
+	}
+
+	payload := builders.NewTelegramMessageBuilder(chatID).SetText(messages.SuccessfullyRegisteredExpenseText).Build()
+	h.telegramService.SendMessage(payload)
 }
 
 func (h *ExpenseCommandHandler) ValidateArgs(args []string) bool {
 
-	if len(args) < 1 {
+	if len(args) < 2 {
 		return false
 	}
 
 	amount := args[0]
 
-	if args[1] != "" || args[2] != "" {
+	if args[1] != "" {
 		h.description = args[1]
-		h.category = args[2]
 	}
 
 	parsedAmount, err := strconv.ParseFloat(amount, 64)
@@ -53,6 +62,7 @@ func (h *ExpenseCommandHandler) ValidateArgs(args []string) bool {
 	if err != nil {
 		return false
 	}
+
 	h.amount = parsedAmount
 
 	return true

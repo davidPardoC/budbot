@@ -52,6 +52,6 @@ func (u *UserUseCases) SetCurrentMothBudget(userId int64, budget float64) (strin
 	return messages.SuccesBudgetCommandText, err
 }
 
-func (u *UserUseCases) RegisterTransaction(amount float64, description string, categoryID int64, transactionType transactionsModels.TransactionType, userId int64) (int64, error) {
-	return u.transactionsRepo.CreateTransaction(amount, description, categoryID, transactionType, userId)
+func (u *UserUseCases) RegisterTransaction(amount float64, description string, transactionType transactionsModels.TransactionType, userId int64) (int64, error) {
+	return u.transactionsRepo.CreateTransaction(amount, description, transactionType, userId)
 }
