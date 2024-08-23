@@ -29,7 +29,7 @@ func (r *WebhookRouter) SetupWebhookRouter() {
 
 	budgetRepository := budgetRepo.NewBudgetRepository(r.db)
 	userRepository := userRepo.NewUserRepository(r.db)
-	transactionRepository := transactionRepo.NewTransactionsRepository()
+	transactionRepository := transactionRepo.NewTransactionsRepository(r.db)
 	userUc := userUc.NewUserUsecases(userRepository, budgetRepository, transactionRepository)
 
 	telegramServices := services.NewTelegramService(r.config)

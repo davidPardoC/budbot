@@ -6,30 +6,32 @@ import (
 )
 
 type TransactionsRepository struct {
-	database *gorm.DB
+	db *gorm.DB
 }
 
-func NewTransactionsRepository() *TransactionsRepository {
-	return &TransactionsRepository{}
+func NewTransactionsRepository(db *gorm.DB) *TransactionsRepository {
+	return &TransactionsRepository{db: db}
 }
 
 func (tr *TransactionsRepository) CreateTransaction(amount float64, description string, transactionType models.TransactionType, createdBy int64) (int64, error) {
-	t := &models.Transactions{
+	transaction := models.Transactions{
 		Amount:      amount,
 		Description: description,
 		Type:        transactionType,
 		CreatedBy:   createdBy,
 	}
 
-	return t.ID, tr.database.Create(t).Error
+	result := tr.db.Create(&transaction)
+
+	return transaction.ID, result.Error
 }
 
 func (tr *TransactionsRepository) GetAllTransactions() ([]models.Transactions, error) {
 	var transactions []models.Transactions
-	tr.database.Find(&transactions)
+	tr.db.Find(&transactions)
 	return transactions, nil
 }
 
 func (tr *TransactionsRepository) DeleteTransaction(transactionID int64) error {
-	return tr.database.Where("id = ?", transactionID).Delete(&models.Transactions{}).Error
+	return tr.db.Where("id = ?", transactionID).Delete(&models.Transactions{}).Error
 }
