@@ -15,4 +15,8 @@ func NewFrontendRouter(gin *gin.Engine) *FrontendRouter {
 
 func (r *FrontendRouter) SetupFrontendRouter() {
 	r.gin.Use(static.Serve("/", static.LocalFile("./frontend/dist", true)))
+
+	r.gin.NoRoute(func(c *gin.Context) {
+		c.File("./frontend/dist/index.html")
+	})
 }

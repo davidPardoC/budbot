@@ -1,4 +1,7 @@
-import { Redirect, Route, Switch } from "wouter"
+import { NotFoundPage } from "@/components/common/NotFoundPage"
+import { HomePage } from "@/pages/HomePage"
+import { SettingsPage } from "@/pages/SettingsPage"
+import { Redirect, Route, Router, Switch } from "wouter"
 import LoginPage from "../pages/LoginPage"
 
 const MainRouter = () => {
@@ -6,6 +9,11 @@ const MainRouter = () => {
     <Switch>
         <Route path="/" component={() => <Redirect to="/login" /> } />
         <Route path="/login" component={LoginPage} />
+        <Route path="/home" component={HomePage} />
+        <Route path="/settings" component={SettingsPage} />
+        <Router>
+          <NotFoundPage/>
+        </Router>
     </Switch>
   )
 }
