@@ -8,8 +8,9 @@ import (
 	"github.com/davidPardoC/budbot/internal/telegram/builders"
 	"github.com/davidPardoC/budbot/internal/telegram/constants/messages"
 	"github.com/davidPardoC/budbot/internal/telegram/services"
-	userModels "github.com/davidPardoC/budbot/internal/users/models"
 	"github.com/davidPardoC/budbot/internal/users/usecases"
+
+	userModels "github.com/davidPardoC/budbot/internal/users/models"
 )
 
 type StatsCommandHandler struct {
@@ -96,6 +97,10 @@ func generateProgressBar(spent, total float64) (progressBar string) {
 	}
 
 	progressBar = strings.Repeat(progressIcon, completed) + strings.Repeat(white, barLength-completed)
+
+	if progress > 1 {
+		progressBar = progressBar + "💀"
+	}
 
 	return
 }
