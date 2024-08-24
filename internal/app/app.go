@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 
+	frontend "github.com/davidPardoC/budbot/internal/frontend/delivery/http"
 	health "github.com/davidPardoC/budbot/internal/health/delivery/http"
 	telegram "github.com/davidPardoC/budbot/internal/telegram/delivery/http"
 
@@ -28,7 +29,9 @@ func NewApp(db *gorm.DB, gin *gin.Engine, cfg config.Config) *App {
 func (a *App) Run() {
 	webhookRouter := telegram.NewWebhookRouter(a.gin, a.cfg, a.db)
 	healthRouter := health.NewHealthRouter(a.gin)
+	frontendRouter := frontend.NewFrontendRouter(a.gin)
 
+	frontendRouter.SetupFrontendRouter()
 	webhookRouter.SetupWebhookRouter()
 	healthRouter.SetupHelthRouter()
 
