@@ -35,3 +35,9 @@ func (br *BudgetRepository) UpdateBudget(Id int64, budget float64) error {
 
 	return br.database.Model(&models.Budget{}).Where("id = ?", Id).Updates(b).Error
 }
+
+func (br *BudgetRepository) GetBudgetByMoth(userId int64, month int) (*models.Budget, error) {
+	var budget models.Budget
+	result := br.database.Where("created_by = ? AND EXTRACT(MONTH FROM created_at) = ?", userId, month).First(&budget)
+	return &budget, result.Error
+}
