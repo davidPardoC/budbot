@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type TransactionType string
 
 const (
@@ -13,4 +15,5 @@ type Transactions struct {
 	Description string          `json:"description"`
 	Type        TransactionType `json:"type"`
 	CreatedBy   int64           `json:"created_by"`
+	CreatedAt   time.Time       `json:"created_at" gorm:"autoCreateTime"`
 }

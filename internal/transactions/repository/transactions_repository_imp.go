@@ -35,3 +35,15 @@ func (tr *TransactionsRepository) GetAllTransactions() ([]models.Transactions, e
 func (tr *TransactionsRepository) DeleteTransaction(transactionID int64) error {
 	return tr.db.Where("id = ?", transactionID).Delete(&models.Transactions{}).Error
 }
+
+func (tr *TransactionsRepository) GetExpensesByMonth(userId int64, month int) (float64, error) {
+	var expense float64
+	result := tr.db.Table("transactions").Select("sum(amount)").Where("created_by = ? AND type = ? AND EXTRACT(MONTH FROM created_at) = ?", userId, models.Expense, month).Scan(&expense)
+	return expense, result.Error
+}
+
+func (tr *TransactionsRepository) GetIncomesByMonth(userId int64, month int) (float64, error) {
+	var income float64
+	result := tr.db.Table("transactions").Select("sum(amount)").Where("created_by = ? AND type = ? AND EXTRACT(MONTH FROM created_at) = ?", userId, models.Income, month).Scan(&income)
+	return income, result.Error
+}

@@ -15,3 +15,10 @@ type User struct {
 	Budgets      []budgetsModel.Budget           `json:"budgets" gorm:"foreignKey:CreatedBy"`
 	Transactions []transactiosModel.Transactions `json:"transactions" gorm:"foreignKey:CreatedBy"`
 }
+
+type UserStats struct {
+	TotalIncome     float64 `json:"total_income"`
+	Spent           float64 `json:"spent"`
+	Budget          float64 `json:"budget"`
+	SpentPercentage float64 `json:"spent_percentage"`
+}

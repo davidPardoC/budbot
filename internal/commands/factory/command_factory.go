@@ -23,6 +23,7 @@ func NewCommandsFactory(config config.Config, telegramService services.ITelegram
 	commands["/budget"] = handlers.NewBudgetCommandHandler(telegramService, userUseCases)
 	commands["/re"] = handlers.NewExpenseCommandHandler(telegramService, userUseCases)
 	commands["/ri"] = handlers.NewIncomeCommandHandler(telegramService, userUseCases)
+	commands["/stats"] = handlers.NewStatsCommandHandler(telegramService, userUseCases)
 
 	commandsList := make([]string, 0)
 
