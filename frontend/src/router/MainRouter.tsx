@@ -1,4 +1,5 @@
 import { NotFoundPage } from "@/components/common/NotFoundPage"
+import { ProtectedRoute } from "@/components/common/ProtectedRoute"
 import { HomePage } from "@/pages/HomePage"
 import { SettingsPage } from "@/pages/SettingsPage"
 import { Redirect, Route, Router, Switch } from "wouter"
@@ -9,7 +10,7 @@ const MainRouter = () => {
     <Switch>
         <Route path="/" component={() => <Redirect to="/login" /> } />
         <Route path="/login" component={LoginPage} />
-        <Route path="/home" component={HomePage} />
+        <ProtectedRoute path="/home" component={HomePage} />
         <Route path="/settings" component={SettingsPage} />
         <Router>
           <NotFoundPage/>

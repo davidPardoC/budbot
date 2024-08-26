@@ -20,7 +20,7 @@ const LoginForm = () => {
     script.setAttribute("data-size", "large");
     script.setAttribute(
       "data-auth-url",
-      "http://127.0.0.1/api/v1/auth/telegram/callback"
+      "http://127.0.0.1:8000/api/v1/auth/telegram/callback"
     );
     script.setAttribute("data-request-access", "write");
 
