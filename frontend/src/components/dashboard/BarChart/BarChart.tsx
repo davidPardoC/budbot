@@ -19,9 +19,11 @@ export const DashboardBarChart = ({ chartConfig, chartData }: Props) => {
   return (
     <Card className="w-full md:w-2/3 p-2">
       <div className="flex">
-        <ChartSelection  className="ml-auto"/>
+        <ChartSelection className="ml-auto" />
       </div>
-      <ChartContainer config={chartConfig} className="min-h-[200px] ">
+      <ChartContainer
+        config={chartConfig}
+      >
         <BarChart accessibilityLayer data={chartData}>
           <CartesianGrid vertical={false} />
           <XAxis
