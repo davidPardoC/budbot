@@ -12,6 +12,7 @@ type Config struct {
 	Telegram Telegram
 	Database Database
 	Server   Server
+	Auth     Auth
 }
 
 type Telegram struct {
@@ -30,6 +31,11 @@ type Database struct {
 type Server struct {
 	Port string
 	Env  string
+}
+
+type Auth struct {
+	JwtSecret       string
+	RefresJwtSecret string
 }
 
 func LoadConfig() Config {
@@ -54,6 +60,10 @@ func LoadConfig() Config {
 		Server: Server{
 			Port: os.Getenv("PORT"),
 			Env:  os.Getenv("ENV"),
+		},
+		Auth: Auth{
+			JwtSecret:       os.Getenv("JWT_SECRET"),
+			RefresJwtSecret: os.Getenv("REFRESH_JWT_SECRET"),
 		},
 	}
 }
