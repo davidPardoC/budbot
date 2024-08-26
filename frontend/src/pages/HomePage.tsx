@@ -53,7 +53,7 @@ const chartConfig = {
 
 export const HomePage = () => {
   return (
-    <main className="container pt-10">
+    <main className="container pt-10 pb-10">
       <Header/>
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
         {Cards.map((card, index) => (
