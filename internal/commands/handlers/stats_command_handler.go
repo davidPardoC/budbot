@@ -96,6 +96,10 @@ func generateProgressBar(spent, total float64) (progressBar string) {
 		progressIcon = red
 	}
 
+	if completed > barLength {
+		completed = barLength
+	}
+
 	progressBar = strings.Repeat(progressIcon, completed) + strings.Repeat(white, barLength-completed)
 
 	if progress > 1 {
