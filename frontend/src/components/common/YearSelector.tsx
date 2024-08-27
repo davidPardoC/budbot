@@ -5,7 +5,6 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 type Props = { defaultYear?: string };
 
 export const YearSelector = ({defaultYear = DateTime.now().year.toString()}:Props) => {
-    console.log(defaultYear)
   return (
     <Select defaultValue={defaultYear}>
       <SelectTrigger className="w-[180px]">
