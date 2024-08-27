@@ -1,12 +1,18 @@
 import { YEARS } from "@/constants/years";
-import { DateTime } from "luxon";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
-type Props = { defaultYear?: string };
+type Props = { defaultYear?: string; onValueChange: (value: string) => void };
 
-export const YearSelector = ({defaultYear = DateTime.now().year.toString()}:Props) => {
+export const YearSelector = ({ defaultYear, onValueChange }: Props) => {
   return (
-    <Select defaultValue={defaultYear}>
+    <Select defaultValue={defaultYear} onValueChange={onValueChange}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Select a month" />
       </SelectTrigger>
@@ -20,5 +26,5 @@ export const YearSelector = ({defaultYear = DateTime.now().year.toString()}:Prop
         </SelectGroup>
       </SelectContent>
     </Select>
-  )
-}
+  );
+};

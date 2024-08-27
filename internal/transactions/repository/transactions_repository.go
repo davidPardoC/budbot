@@ -11,4 +11,6 @@ type ITransactionsRepository interface {
 	DeleteTransaction(transactionID int64) error
 	GetExpensesByMonth(userId int64, month int) (float64, error)
 	GetIncomesByMonth(userId int64, month int) (float64, error)
+	GetExpensesBetweenDates(userId int64, startDate string, endDate string) (float64, error)
+	GetIncomesBetweenDates(userId int64, startDate string, endDate string) (float64, error)
 }

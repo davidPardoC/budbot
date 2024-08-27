@@ -3,33 +3,11 @@ import { DashboardBarChart } from "@/components/dashboard/BarChart/BarChart";
 import { Header } from "@/components/dashboard/Header/Header";
 import { TransactionsHistory } from "@/components/dashboard/TransactionsHistory";
 import { type ChartConfig } from "@/components/ui/chart";
-
-const Cards = [
-  {
-    title: "Spent",
-    amount: 1000,
-    subtitle: "Spent in current mount",
-    isMoney: true,
-  },
-  {
-    title: "Income",
-    amount: 1000,
-    subtitle: "Spent in current mount",
-    isMoney: true,
-  },
-  {
-    title: "Budget",
-    amount: 1000,
-    subtitle: "Spent in current mount",
-    isMoney: true,
-  },
-  {
-    title: "Spent",
-    amount: 1000,
-    subtitle: "Spent in current mount",
-    isMoney: true,
-  },
-];
+import { STATS_CACHE_KEY } from "@/constants/cache";
+import { getUserStats } from "@/services/stas-services";
+import { useDashboardStore } from "@/stores/auth.store";
+import { getUserFromToken } from "@/utils/auth";
+import { useQuery } from "react-query";
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -52,13 +30,21 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export const HomePage = () => {
+  const { currentMonth, currentYear } = useDashboardStore();
+
+  const { user_id } = getUserFromToken();
+  const { data, isLoading } = useQuery(
+    [STATS_CACHE_KEY, currentMonth, currentYear],
+    () => getUserStats(user_id, parseInt(currentMonth), parseInt(currentYear))
+  );
   return (
     <main className="container pt-10 pb-10">
-      <Header/>
+      <Header />
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
-        {Cards.map((card, index) => (
-          <StatCard key={index} {...card} />
-        ))}
+        {data &&
+          data.map((card, index) => (
+            <StatCard key={index} {...card} isLoading={isLoading} isMoney />
+          ))}
       </section>
       <section className="flex flex-col md:flex-row mt-5 gap-4">
         <DashboardBarChart chartConfig={chartConfig} chartData={chartData} />

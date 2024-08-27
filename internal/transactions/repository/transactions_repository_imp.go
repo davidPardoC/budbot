@@ -38,12 +38,24 @@ func (tr *TransactionsRepository) DeleteTransaction(transactionID int64) error {
 
 func (tr *TransactionsRepository) GetExpensesByMonth(userId int64, month int) (float64, error) {
 	var expense float64
-	result := tr.db.Table("transactions").Select("sum(amount)").Where("created_by = ? AND type = ? AND EXTRACT(MONTH FROM created_at) = ?", userId, models.Expense, month).Scan(&expense)
+	result := tr.db.Table("transactions").Select("COALESCE(sum(amount), 0)").Where("created_by = ? AND type = ? AND EXTRACT(MONTH FROM created_at) = ?", userId, models.Expense, month).Scan(&expense)
 	return expense, result.Error
 }
 
 func (tr *TransactionsRepository) GetIncomesByMonth(userId int64, month int) (float64, error) {
 	var income float64
-	result := tr.db.Table("transactions").Select("sum(amount)").Where("created_by = ? AND type = ? AND EXTRACT(MONTH FROM created_at) = ?", userId, models.Income, month).Scan(&income)
+	result := tr.db.Table("transactions").Select("COALESCE(sum(amount), 0)").Where("created_by = ? AND type = ? AND EXTRACT(MONTH FROM created_at) = ?", userId, models.Income, month).Scan(&income)
+	return income, result.Error
+}
+
+func (tr *TransactionsRepository) GetExpensesBetweenDates(userId int64, startDate string, endDate string) (float64, error) {
+	var expense float64
+	result := tr.db.Table("transactions").Select("COALESCE(sum(amount), 0)").Where("created_by = ? AND type = ? AND created_at BETWEEN ? AND ?", userId, models.Expense, startDate, endDate).Scan(&expense)
+	return expense, result.Error
+}
+
+func (tr *TransactionsRepository) GetIncomesBetweenDates(userId int64, startDate string, endDate string) (float64, error) {
+	var income float64
+	result := tr.db.Table("transactions").Select("COALESCE(sum(amount), 0)").Where("created_by = ? AND type = ? AND created_at BETWEEN ? AND ?", userId, models.Income, startDate, endDate).Scan(&income)
 	return income, result.Error
 }
