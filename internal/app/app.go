@@ -31,12 +31,11 @@ func (a *App) Run() {
 	webhookRouter := telegram.NewWebhookRouter(a.gin, a.cfg, a.db)
 	healthRouter := health.NewHealthRouter(a.gin)
 	frontendRouter := frontend.NewFrontendRouter(a.gin)
-	authRuter := auth.NewAuthRouter(a.gin, a.db, a.cfg)
+	authRouter := auth.NewAuthRouter(a.gin, a.db, a.cfg)
 
-	frontendRouter.SetupFrontendRouter()
 	webhookRouter.SetupWebhookRouter()
 	healthRouter.SetupHelthRouter()
-	authRuter.SetupRoutes()
+	authRouter.SetupRoutes()
 	frontendRouter.SetupFrontendRouter()
 
 	a.gin.Run(fmt.Sprintf(":%s", a.cfg.Server.Port))

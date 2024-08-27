@@ -13,6 +13,7 @@ type User struct {
 	PhoneNumber  string                          `json:"phone_number"`
 	UserType     string                          `json:"user_type"`
 	PhotoUrl     string                          `json:"photo_url"`
+	RefreshToken string                          `json:"refresh_token"`
 	Budgets      []budgetsModel.Budget           `json:"budgets" gorm:"foreignKey:CreatedBy"`
 	Transactions []transactiosModel.Transactions `json:"transactions" gorm:"foreignKey:CreatedBy"`
 }

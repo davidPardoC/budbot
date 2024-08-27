@@ -34,3 +34,8 @@ func (u *UserRepository) FindByChatID(chatId int64) (*models.User, error) {
 	result := u.db.Where("chat_id = ?", chatId).First(&user)
 	return &user, result.Error
 }
+
+func (u *UserRepository) UpdateUser(user *models.User) (*models.User, error) {
+	result := u.db.Save(&user)
+	return user, result.Error
+}

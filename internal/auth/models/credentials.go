@@ -8,8 +8,8 @@ type Credentials struct {
 }
 
 type TokenCustomClaims struct {
-	ChatID   int64
-	UserId   int64
-	PhotoUrl string
+	ChatID   int64  `json:"chat_id"`
+	UserId   int64  `json:"user_id"`
+	PhotoUrl string `json:"photo_url"`
 	jwt.StandardClaims
 }

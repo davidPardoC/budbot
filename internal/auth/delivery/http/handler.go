@@ -46,6 +46,6 @@ func (a *AuthHandlers) oAuthTelegramHandler(c *gin.Context) {
 	}
 
 	c.SetCookie("token", credentials.Token, constants.HourInSeconds, "/", redirectDomain, false, false)
-	c.SetCookie("access-token", credentials.RefreshToken, constants.WeekInSeconds, "/", redirectDomain, false, false)
+	c.SetCookie("refresh-token", credentials.RefreshToken, constants.WeekInSeconds, "/", redirectDomain, false, false)
 	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf("%s/home", redirectDomain))
 }

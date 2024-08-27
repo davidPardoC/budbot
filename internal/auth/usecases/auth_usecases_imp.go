@@ -61,6 +61,9 @@ func (auc *AuthUseCasesImp) Login(dto dtos.TelegramCallbackDto, query map[string
 		return nil, err
 	}
 
+	user.PhotoUrl = dto.PhotoUrl
+	auc.userRepository.UpdateUser(user)
+
 	tokenClaims := models.TokenCustomClaims{
 		ChatID:   user.ChatID,
 		UserId:   user.ID,
