@@ -31,4 +31,4 @@ jobs:
                   echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
                   echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}" >> .env  
                   docker-compose down &&
-                  docker-compose up -d --build
+                  docker-compose up -d --build --remove-orphans
