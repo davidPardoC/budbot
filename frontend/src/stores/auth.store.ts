@@ -7,7 +7,7 @@ interface DashboardStore {
   setCurrentDate: (month: string, year: string) => void;
 }
 
-export const useAuthStore = create<DashboardStore>()((set) => ({
+export const useDashboardStore = create<DashboardStore>()((set) => ({
   currentMonth: DateTime.now().month.toString(),
   currentYear: DateTime.now().year.toString(),
   setCurrentDate: (month: string, year: string) =>

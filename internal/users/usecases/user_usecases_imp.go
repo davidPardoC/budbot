@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	budgetRepo "github.com/davidPardoC/budbot/internal/budgets/repository"
@@ -89,4 +90,47 @@ func (u *UserUseCases) GetCurrentMothStats(userId int64) (*models.UserStats, err
 	}
 
 	return &stats, err
+}
+
+func (u *UserUseCases) GetStatsBetweenDates(userId int64, month int, year int) ([]models.StatCard, error) {
+
+	startDate := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
+	endDate := startDate.AddDate(0, 1, -1)
+
+	dateFormat := "2006-01-02"
+
+	startDateFormated := startDate.Format(dateFormat)
+	endDateFormated := endDate.Format(dateFormat)
+
+	expenses, err := u.transactionsRepo.GetExpensesBetweenDates(userId, startDateFormated, endDateFormated)
+
+	if err != nil {
+		return nil, err
+	}
+
+	incomes, err := u.transactionsRepo.GetIncomesBetweenDates(userId, startDateFormated, endDateFormated)
+
+	if err != nil {
+		return nil, err
+	}
+
+	budget, _ := u.budgetRepository.GetBudgetBetweenDates(userId, startDateFormated, endDateFormated)
+
+	monthStr := startDate.Month().String()
+
+	var spentPercentage float64
+	if budget.Amount > 0 {
+		spentPercentage = (expenses / budget.Amount) * 100
+	} else {
+		spentPercentage = 0
+	}
+
+	statCards := []models.StatCard{
+		{Title: "Incomes", Amount: incomes, Icon: "💰", Subtitle: fmt.Sprintf("Incomes for month of %s", monthStr), Type: "money"},
+		{Title: "Expenses", Amount: expenses, Icon: "💸", Subtitle: fmt.Sprintf("Expenses for month of %s", monthStr), Type: "money"},
+		{Title: "Budget", Amount: budget.Amount, Icon: "💵", Subtitle: fmt.Sprintf("Budget for month of %s", monthStr), Type: "money"},
+		{Title: "Spent Percentage", Amount: spentPercentage, Icon: "📊", Subtitle: fmt.Sprintf("Spent percentage for month of %s", monthStr), Type: "percentage"},
+	}
+
+	return statCards, err
 }

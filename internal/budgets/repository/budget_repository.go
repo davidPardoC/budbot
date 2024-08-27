@@ -9,4 +9,5 @@ type IBudgetRepository interface {
 	GetLastBudget(userId int64) *models.Budget
 	UpdateBudget(Id int64, budget float64) error
 	GetBudgetByMoth(userId int64, month int) (*models.Budget, error)
+	GetBudgetBetweenDates(userId int64, startDate string, endDate string) (*models.Budget, error)
 }
