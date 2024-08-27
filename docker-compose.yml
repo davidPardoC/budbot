@@ -1,10 +1,15 @@
 version: '3'
 
 services:
-  web:
-    container_name: butbot
+  api:
+    container_name: butbot-api
     build: .
     env_file:
       - .env
     ports:
       - "8000:8000"
+  frontend:
+    container_name: butbot-frontend
+    build: ./frontend
+    ports:
+      - "3000:3000"
