@@ -28,5 +28,7 @@ func (r *UserRouter) SetupRoutes() {
 	users := r.gin.Group("/api/v1/users")
 	{
 		users.GET("/:user_id/stats", r.handlers.GetStats)
+		users.GET("/:user_id/transactions", r.handlers.GetTransactions)
+		users.GET("/:user_id/transactions-grouped", r.handlers.GetTransactionsGrouped)
 	}
 }

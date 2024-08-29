@@ -17,3 +17,9 @@ type Transactions struct {
 	CreatedBy   int64           `json:"created_by"`
 	CreatedAt   time.Time       `json:"created_at" gorm:"autoCreateTime"`
 }
+
+type TransactionsGroupedByCategory struct {
+	Description string  `json:"description"`
+	Amount      float64 `json:"amount"`
+	Type        string  `json:"type"`
+}

@@ -134,3 +134,27 @@ func (u *UserUseCases) GetStatsBetweenDates(userId int64, month int, year int) (
 
 	return statCards, err
 }
+
+func (u *UserUseCases) GetTransactionsBetweenDates(userId int64, month int, year int) ([]transactionsModels.Transactions, error) {
+	startDate := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
+	endDate := startDate.AddDate(0, 1, -1)
+
+	dateFormat := "2006-01-02"
+
+	startDateFormated := startDate.Format(dateFormat)
+	endDateFormated := endDate.Format(dateFormat)
+
+	return u.transactionsRepo.GetTransactionsBetweenDates(userId, startDateFormated, endDateFormated)
+}
+
+func (u *UserUseCases) GetTransactionsGroupedByCategory(userId int64, month int, year int) ([]transactionsModels.TransactionsGroupedByCategory, error) {
+	startDate := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
+	endDate := startDate.AddDate(0, 1, -1)
+
+	dateFormat := "2006-01-02"
+
+	startDateFormated := startDate.Format(dateFormat)
+	endDateFormated := endDate.Format(dateFormat)
+
+	return u.transactionsRepo.GetTransactionsGroupedByCategory(userId, startDateFormated, endDateFormated)
+}

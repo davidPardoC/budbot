@@ -12,4 +12,6 @@ type IUserUseCases interface {
 	RegisterTransaction(amount float64, description string, transactionType transactionModels.TransactionType, userId int64) (int64, error)
 	GetCurrentMothStats(userId int64) (*models.UserStats, error)
 	GetStatsBetweenDates(userId int64, month int, year int) ([]models.StatCard, error)
+	GetTransactionsBetweenDates(userId int64, month int, year int) ([]transactionModels.Transactions, error)
+	GetTransactionsGroupedByCategory(userId int64, month int, year int) ([]transactionModels.TransactionsGroupedByCategory, error)
 }

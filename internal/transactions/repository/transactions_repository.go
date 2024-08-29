@@ -13,4 +13,6 @@ type ITransactionsRepository interface {
 	GetIncomesByMonth(userId int64, month int) (float64, error)
 	GetExpensesBetweenDates(userId int64, startDate string, endDate string) (float64, error)
 	GetIncomesBetweenDates(userId int64, startDate string, endDate string) (float64, error)
+	GetTransactionsBetweenDates(userId int64, startDate string, endDate string) ([]models.Transactions, error)
+	GetTransactionsGroupedByCategory(userId int64, startDate string, endDate string) ([]models.TransactionsGroupedByCategory, error)
 }
