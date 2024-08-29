@@ -12,4 +12,4 @@ services:
     container_name: butbot-frontend
     build: ./frontend
     ports:
-      - "3000:3000"
+      - "3001:3000"
