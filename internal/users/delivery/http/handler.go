@@ -63,3 +63,83 @@ func (u *UserHandlers) GetStats(c *gin.Context) {
 
 	c.JSON(200, stats)
 }
+
+func (u *UserHandlers) GetTransactions(c *gin.Context) {
+	var params RouteParams
+	var query RouteQuery
+
+	if err := c.ShouldBindUri(&params); err != nil {
+		c.JSON(400, gin.H{"msg": err.Error()})
+		return
+	}
+
+	if err := c.ShouldBindQuery(&query); err != nil {
+		c.JSON(400, gin.H{"msg": err.Error()})
+		return
+	}
+
+	parsedUserId, err := strconv.ParseInt(params.UserId, 10, 64)
+
+	if err != nil {
+		c.JSON(400, gin.H{"msg": err.Error()})
+		return
+	}
+
+	parsedMonth, err := strconv.ParseInt(query.Month, 10, 64)
+
+	if err != nil {
+		c.JSON(400, gin.H{"msg": err.Error()})
+		return
+	}
+
+	parsedYear, err := strconv.ParseInt(query.Year, 10, 64)
+
+	if err != nil {
+		c.JSON(400, gin.H{"msg": err.Error()})
+		return
+	}
+
+	transactions, err := u.userUseCases.GetTransactionsBetweenDates(parsedUserId, int(parsedMonth), int(parsedYear))
+
+	c.JSON(200, transactions)
+}
+
+func (u *UserHandlers) GetTransactionsGrouped(c *gin.Context) {
+	var params RouteParams
+	var query RouteQuery
+
+	if err := c.ShouldBindUri(&params); err != nil {
+		c.JSON(400, gin.H{"msg": err.Error()})
+		return
+	}
+
+	if err := c.ShouldBindQuery(&query); err != nil {
+		c.JSON(400, gin.H{"msg": err.Error()})
+		return
+	}
+
+	parsedUserId, err := strconv.ParseInt(params.UserId, 10, 64)
+
+	if err != nil {
+		c.JSON(400, gin.H{"msg": err.Error()})
+		return
+	}
+
+	parsedMonth, err := strconv.ParseInt(query.Month, 10, 64)
+
+	if err != nil {
+		c.JSON(400, gin.H{"msg": err.Error()})
+		return
+	}
+
+	parsedYear, err := strconv.ParseInt(query.Year, 10, 64)
+
+	if err != nil {
+		c.JSON(400, gin.H{"msg": err.Error()})
+		return
+	}
+
+	transactions, err := u.userUseCases.GetTransactionsGroupedByCategory(parsedUserId, int(parsedMonth), int(parsedYear))
+
+	c.JSON(200, transactions)
+}

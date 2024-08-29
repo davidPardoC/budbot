@@ -59,3 +59,15 @@ func (tr *TransactionsRepository) GetIncomesBetweenDates(userId int64, startDate
 	result := tr.db.Table("transactions").Select("COALESCE(sum(amount), 0)").Where("created_by = ? AND type = ? AND created_at BETWEEN ? AND ?", userId, models.Income, startDate, endDate).Scan(&income)
 	return income, result.Error
 }
+
+func (tr *TransactionsRepository) GetTransactionsBetweenDates(userId int64, startDate string, endDate string) ([]models.Transactions, error) {
+	var transactions []models.Transactions
+	result := tr.db.Where("created_by = ? AND created_at BETWEEN ? AND ?", userId, startDate, endDate).Find(&transactions)
+	return transactions, result.Error
+}
+
+func (tr *TransactionsRepository) GetTransactionsGroupedByCategory(userId int64, startDate string, endDate string) ([]models.TransactionsGroupedByCategory, error) {
+	results := []models.TransactionsGroupedByCategory{}
+	reslut := tr.db.Table("transactions").Select("description, type, sum(amount) as amount").Where("created_by = ? AND created_at BETWEEN ? AND ?", userId, startDate, endDate).Group("description").Group("type").Scan(&results)
+	return results, reslut.Error
+}
