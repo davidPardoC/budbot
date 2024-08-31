@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { FaTelegramPlane } from "react-icons/fa";
-import { Link } from "wouter";
 
 export const AddNewTrandactionModal = () => {
   return (
@@ -25,11 +24,14 @@ export const AddNewTrandactionModal = () => {
           <DialogDescription>
             <p>This feature is not available yet, but it will be soon.</p>
             <p>Register transacations in the telegram bot.</p>
-            <Link href="https://t.me/PocketBudBot">
-              <Button className="mt-2 rounded-full bg-[#24A1DE] text-white">
-                Go to Bot <FaTelegramPlane size={20} className="ml-2" />
-              </Button>
-            </Link>
+            <a
+              href={`https://t.me/${
+                import.meta.env.PROD ? "PocketBudBot" : "DevPocketBud_bot"
+              }`}
+              className="flex items-center w-fit gap-1 text-white bg-[#24A1DE] px-4 py-3 rounded-full mt-3 text-md mx-auto"
+            >
+              Go to bot <FaTelegramPlane size={20} />
+            </a>
           </DialogDescription>
         </DialogHeader>
       </DialogContent>
