@@ -6,10 +6,21 @@ import { useDashboardStore } from "@/stores/auth.store";
 import { getUserFromToken } from "@/utils/auth";
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { Card } from "../../ui/card";
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+const COLORS = [
+  "#0088FE", // Azul brillante
+  "#00C49F", // Verde
+  "#FFBB28", // Amarillo
+  "#FF8042", // Naranja
+  "#8884D8", // Púrpura suave
+  "#82ca9d", // Verde menta
+  "#A4DE6C", // Verde claro
+  "#D0ED57", // Amarillo lima
+  "#FF4560", // Rojo vibrante
+  "#546E7A",
+];
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = (props: Record<string, number & string>) => {
@@ -25,6 +36,7 @@ const renderCustomizedLabel = (props: Record<string, number & string>) => {
       fill={fill}
       textAnchor={x > cx ? "start" : "end"}
       dominantBaseline="central"
+      fontSize={20}
     >
       {`${(percent * 100).toFixed(0)}%`}
     </text>
@@ -71,13 +83,15 @@ export const DashboardChart = () => {
       <div className="h-[25vh] md:h-[50vh] flex justify-center items-center">
         <ResponsiveContainer width={700} height="80%">
           <PieChart>
+            <Tooltip contentStyle={{ textTransform: "capitalize" }} />
             <Pie
               data={data}
               dataKey="amount"
+              nameKey={"description"}
               cx="50%"
               cy="50%"
-              innerRadius={80}
-              outerRadius={120}
+              innerRadius={120}
+              outerRadius={180}
               fill="#82ca9d"
               label={renderCustomizedLabel}
             >

@@ -2,7 +2,7 @@ package messages
 
 const (
 	IncomeCommandInvalidArgsText = `
-	Invalid arguments, please use the following format: /ri <amount> <description>.
+	Invalid arguments, please use the following format: /ri <category> <amount> .
 	`
 
 	SuccessfullyRegisteredIncomeText = `
