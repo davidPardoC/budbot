@@ -1,5 +1,5 @@
 import { StatCard } from "@/components/common/StatCard";
-import { DashboardChart } from "@/components/dashboard/BarChart/BarChart";
+import { DashboardChart } from "@/components/dashboard/BarChart/DashboardChart";
 import { Header } from "@/components/dashboard/Header/Header";
 import { TransactionsHistory } from "@/components/dashboard/TransactionsHistory";
 import { STATS_CACHE_KEY } from "@/constants/cache";

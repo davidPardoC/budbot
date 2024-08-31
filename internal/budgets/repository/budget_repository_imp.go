@@ -44,6 +44,6 @@ func (br *BudgetRepository) GetBudgetByMoth(userId int64, month int) (*models.Bu
 
 func (br *BudgetRepository) GetBudgetBetweenDates(userId int64, startDate string, endDate string) (*models.Budget, error) {
 	var budget models.Budget
-	result := br.database.Where("created_by = ? AND created_at BETWEEN ? AND ?", userId, startDate, endDate).First(&budget)
+	result := br.database.Where("created_by = ?", userId).Where("created_at >= ?", startDate).Where("created_at <= ?", endDate).First(&budget)
 	return &budget, result.Error
 }

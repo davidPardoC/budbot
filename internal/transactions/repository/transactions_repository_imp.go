@@ -62,7 +62,7 @@ func (tr *TransactionsRepository) GetIncomesBetweenDates(userId int64, startDate
 
 func (tr *TransactionsRepository) GetTransactionsBetweenDates(userId int64, startDate string, endDate string) ([]models.Transactions, error) {
 	var transactions []models.Transactions
-	result := tr.db.Where("created_by = ? AND created_at BETWEEN ? AND ?", userId, startDate, endDate).Find(&transactions)
+	result := tr.db.Where("created_by = ? AND created_at BETWEEN ? AND ?", userId, startDate, endDate).Order("created_at DESC").Find(&transactions)
 	return transactions, result.Error
 }
 

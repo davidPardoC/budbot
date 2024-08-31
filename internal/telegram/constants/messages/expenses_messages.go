@@ -2,7 +2,7 @@ package messages
 
 const (
 	ExpenseCommandInvalidArgsText = `
-	Invalid arguments, please use the following format: /re <amount> <description>.
+	Invalid arguments, please use the following format: /re <category> <amount>.
 	`
 
 	SuccessfullyRegisteredExpenseText = `

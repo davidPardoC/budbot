@@ -51,10 +51,10 @@ func (h *ExpenseCommandHandler) ValidateArgs(args []string) bool {
 		return false
 	}
 
-	amount := args[0]
+	amount := args[1]
 
-	if args[1] != "" {
-		h.description = args[1]
+	if args[0] != "" {
+		h.description = args[0]
 	}
 
 	parsedAmount, err := strconv.ParseFloat(amount, 64)
