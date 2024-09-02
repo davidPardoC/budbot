@@ -5,7 +5,7 @@ services:
     container_name: bot-api
     build: ./bot-api
     env_file:
-      - .env
+      - ./bot-api/.env
     ports:
       - "8000:8000"
   frontend:
