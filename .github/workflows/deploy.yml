@@ -30,6 +30,5 @@ jobs:
                   echo "DB_USER=${{ secrets.DB_USER }}" >> .env
                   echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
                   echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}" >> .env
-                  mv ./.env bot-api/.env &&
                   docker-compose down &&
                   docker-compose up -d --build --remove-orphans
