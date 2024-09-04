@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/davidPardoC/budbot/internal/telegram/builders"
 	"github.com/davidPardoC/budbot/internal/telegram/constants/messages"
@@ -52,6 +53,10 @@ func (h *ExpenseCommandHandler) ValidateArgs(args []string) bool {
 	}
 
 	amount := args[1]
+
+	if strings.Contains(amount, ",") {
+		amount = strings.ReplaceAll(amount, ",", ".")
+	}
 
 	if args[0] != "" {
 		h.description = args[0]
