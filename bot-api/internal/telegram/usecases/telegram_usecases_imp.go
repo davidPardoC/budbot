@@ -5,10 +5,14 @@ import (
 	"fmt"
 	"log"
 	"slices"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/davidPardoC/budbot/config"
 	"github.com/davidPardoC/budbot/internal/commands/factory"
+	mediaDtos "github.com/davidPardoC/budbot/internal/media-proccessor/dtos"
+	mediaUseCases "github.com/davidPardoC/budbot/internal/media-proccessor/usecases"
 	"github.com/davidPardoC/budbot/internal/telegram/builders"
 	"github.com/davidPardoC/budbot/internal/telegram/constants/messages"
 	"github.com/davidPardoC/budbot/internal/telegram/delivery/dtos"
@@ -18,16 +22,18 @@ import (
 )
 
 type TelegramUsecases struct {
-	userUseCases userUc.IUserUseCases
-	config       config.Config
-	services     services.ITelegramService
+	userUseCases  userUc.IUserUseCases
+	config        config.Config
+	services      services.ITelegramService
+	mediaUseCases mediaUseCases.IMediaProcessorUsecases
 }
 
-func NewTelegramUsecases(userUseCases userUc.IUserUseCases, config config.Config, services services.ITelegramService) *TelegramUsecases {
+func NewTelegramUsecases(userUseCases userUc.IUserUseCases, config config.Config, services services.ITelegramService, mediaUseCases mediaUseCases.IMediaProcessorUsecases) *TelegramUsecases {
 	return &TelegramUsecases{
-		userUseCases: userUseCases,
-		config:       config,
-		services:     services,
+		userUseCases:  userUseCases,
+		config:        config,
+		services:      services,
+		mediaUseCases: mediaUseCases,
 	}
 }
 
@@ -49,6 +55,11 @@ func (u *TelegramUsecases) HandleWebhook(body dtos.TelegramWebhookDto) (string, 
 
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		u.RequestForContact(chatId)
+		return "pong", nil
+	}
+
+	if u.shouldHandleAudioMessage(body.Message) {
+		u.proccessAudio(body)
 		return "pong", nil
 	}
 
@@ -115,4 +126,44 @@ func (u *TelegramUsecases) SendOnSignupMessage(chatId int64) {
 	telegramMessageBuilder.SetText(messages.CommandsListText).SetParseMode("Markdown").RemovePreviousKeyboard()
 	payload := telegramMessageBuilder.Build()
 	u.services.SendMessage(payload)
+}
+
+func (u *TelegramUsecases) shouldHandleAudioMessage(message dtos.MessageDto) bool {
+	return message.Voice.Duration > 0
+}
+
+func (u *TelegramUsecases) sendProccesingMessage(chatId int64) {
+	telegramMessageBuilder := builders.NewTelegramMessageBuilder(chatId)
+	telegramMessageBuilder.SetText(messages.ProcessingAudioMessage).SetParseMode("Markdown")
+	payload := telegramMessageBuilder.Build()
+	u.services.SendMessage(payload)
+}
+
+func (u *TelegramUsecases) proccessAudio(body dtos.TelegramWebhookDto) {
+	t := time.Now()
+	proccesedAudio := make(chan mediaDtos.ProccesedAudioDto)
+
+	go u.sendProccesingMessage(body.Message.Chat.Id)
+	go func() {
+		proccesedAudio <- u.mediaUseCases.ProccesAudioMessage(body.Message.Voice.FileId, body.Message.Chat.Id)
+	}()
+
+	u.proccesAudioResponse(<-proccesedAudio, body.Message.Chat.Id)
+	fmt.Println("Time to process audio: ", time.Since(t))
+
+}
+
+func (u *TelegramUsecases) proccesAudioResponse(proccesedAudio mediaDtos.ProccesedAudioDto, chatId int64) {
+	var command string
+	args := []string{proccesedAudio.Category, strconv.FormatFloat(proccesedAudio.Amount, 'f', 2, 64)}
+
+	if proccesedAudio.Type == "expense" {
+		command = "/re"
+	} else if proccesedAudio.Type == "income" {
+		command = "/ri"
+	}
+
+	commandsFactory := factory.NewCommandsFactory(u.config, u.services, u.userUseCases)
+	handler := commandsFactory.GetCommand(command)
+	handler.HandleCommand(chatId, args)
 }
