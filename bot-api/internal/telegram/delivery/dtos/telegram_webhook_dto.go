@@ -13,6 +13,7 @@ type MessageDto struct {
 	Date       int64      `json:"date"`
 	Text       string     `json:"text"`
 	ContactDto ContactDto `json:"contact"`
+	Voice      VoiceDto   `json:"voice"`
 }
 
 type UserDto struct {
@@ -42,4 +43,12 @@ type ContactDto struct {
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`
 	UserId      int64  `json:"user_id"`
+}
+
+type VoiceDto struct {
+	Duration     int64  `json:"duration"`
+	FileId       string `json:"file_id"`
+	MimeType     string `json:"mime_type"`
+	FileSize     int64  `json:"file_size"`
+	FileUniqueId string `json:"file_unique_id"`
 }

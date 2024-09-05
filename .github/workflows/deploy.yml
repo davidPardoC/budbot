@@ -22,6 +22,7 @@ jobs:
                   git fetch --all &&
                   git reset --hard origin/main &&
                   git pull origin main &&
+                  > .env &&
                   echo "ENV=production" >> .env
                   echo "PORT=${{ secrets.PORT }}" >> .env
                   echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
@@ -30,5 +31,6 @@ jobs:
                   echo "DB_USER=${{ secrets.DB_USER }}" >> .env
                   echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
                   echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}" >> .env
+                  echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
                   docker-compose down &&
                   docker-compose up -d --build --remove-orphans
